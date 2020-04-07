@@ -1,48 +1,58 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import { Navbar } from 'reactstrap'
-import { ActionButton, ActionModalNavbar, ActionSearch } from '../action'
+import {
+  ActionButton,
+  ActionModal,
+  ActionSearch
+} from '../action'
 
-const MenuBar = (props) => {
-  const [isModalVisible, setModal] = useState(false)
-  const onToggleModal = () => setModal(!isModalVisible)
+class MenuBar extends Component {
+  render() {
+    const actionButton = {
+      colorButton: 'info',
+      titleButton: 'Tambah Santri',
+      onClickButton: () => this.actionModal.onToggleModal()
+    }
 
-  return (
-    <div className='container-fluid p-4'>
-      <Navbar
-        color='light'
-        light
-        expand='md'
-        className='rounded'
-      >
-        <ActionButton
-          colorButton='info'
-          titleButton='Tambah Santri'
-          onClickButton={onToggleModal}
-        />
+    const actionModal = {
+      ref: ref => { this.actionModal = ref },
+      titleHeader: 'Tambah Data Santri',
+      titleButton: 'Simpan',
+      colorButtonLeft: 'info',
+      colorButtonRight: 'secondary',
+      onClickButton: () => {
+        this.props.onHandlePost()
+        this.actionModal.onToggleModal()      
+      },
+      isModalVisible: () => this.state.isModalVisible,
+      onToggleModal: () => this.actionModal.onToggleModal()   
+    }
 
-        <ActionModalNavbar
-          titleHeader='Tambah Data Santri'
-          postDataSantri={props.postDataSantri}
-          isModalVisible={isModalVisible}
-          onToggleModal={onToggleModal}
-          onHandleInput={props.onHandleInput}
-          onHandlePost={props.onHandlePost}
-        />
+    return (
+      <div className='container-fluid p-4'>
+        <Navbar
+          color='light'
+          light
+          expand='md'
+          className='rounded'
+        >
+          <ActionButton {...actionButton} />
 
-        <ActionSearch
-          onSearchSantri={props.onSearchSantri}
-        />
-      </Navbar>
-    </div>
-  )
-}
+          <ActionModal
+            {...actionModal}
+            outlineButtonRight
+            postDataSantri={this.props.postDataSantri}
+            onHandleInput={this.props.onHandleInput}
+            onHandlePost={this.props.onHandlePost}
+          />
 
-MenuBar.propTypes = {
-  postDataSantri: PropTypes.object,
-  onHandleInput: PropTypes.func,
-  onHandlePost: PropTypes.func,
-  onSearchSantri: PropTypes.func
+          <ActionSearch
+            onSearchSantri={this.props.onSearchSantri}
+          />
+        </Navbar>
+      </div>
+    )
+  }
 }
 
 export default MenuBar

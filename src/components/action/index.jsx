@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   Button,
@@ -42,97 +42,103 @@ const CustomInput = (props) => {
   )
 }
 
-const ActionModalNavbar = (props) => {
-  return (
-    <Modal
-      isOpen={props.isModalVisible}
-    >
-      <ActionModalHeader
-        titleHeader={props.titleHeader}
-        onToggleModal={props.onToggleModal}
-      />
-      <ActionModalBody
-        postDataSantri={props.postDataSantri}
-        onHandleInput={props.onHandleInput}
-      />
-      <ActionModalFooter
-        onToggleModal={props.onToggleModal}
-        onHandlePost={props.onHandlePost}
-      />
-    </Modal>
-  )
-}
+class ActionModal extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isModalVisible: false
+    }
+  }
 
-const ActionModalHeader = (props) => {
-  return (
-    <ModalHeader
-      toggle={() => props.onToggleModal()}
-    >
-      {props.titleHeader}
-    </ModalHeader>
-  )
-}
+  onToggleModal = () => {
+    this.setState({
+      isModalVisible: !this.state.isModalVisible
+    })
+  }
 
-const ActionModalBody = (props) => {
-  return (
-    <ModalBody>
+  render() {
+    return (
+      <Modal
+        isOpen={this.state.isModalVisible}
+        toggle={this.onToggleModal}
+      >
+        {this.renderActionModalHeader()}
+        {this.renderActionModalBody()}
+        {this.renderActionModalFooter()}
+
+      </Modal>
+    )
+  }
+
+  renderActionModalHeader() {
+    return (
+      <ModalHeader
+        className={this.props.className}
+      >
+        {this.props.titleHeader}
+      </ModalHeader>
+    )
+  }
+
+  renderActionModalBody() {
+    return (
+    <ModalBody className={this.props.classNameBody}>
       <Form>
-        <ActionFormBody
+        <ActionFormGroup
           label='name'
           nameLabel='Nama Santri'
           typeInput='text'
           nameInput='name'
           idInput='name'
           placeholderInput='nama santri'
-          valueInput={props.postDataSantri.name}
-          onChangeInput={(e) => props.onHandleInput(e)}
+          valueInput={this.props.postDataSantri.name}
+          onChangeInput={(e) => this.props.onHandleInput(e)}
         />
 
-        <ActionFormBody
+        <ActionFormGroup
           label='studyProgram'
           nameLabel='Jurusan Santri'
           typeInput='text'
           nameInput='studyProgram'
           idInput='studyProgram'
           placeholderInput='jurusan santri'
-          valueInput={props.postDataSantri.studyProgram}
-          onChangeInput={(e) => props.onHandleInput(e)}
+          valueInput={this.props.postDataSantri.studyProgram}
+          onChangeInput={(e) => this.props.onHandleInput(e)}
         />
       </Form>
     </ModalBody>
-  )
+    )
+  }
+
+  renderActionModalFooter() {
+    return (
+      <ModalFooter className={this.props.className}>
+        <ActionButton
+          titleButton={this.props.titleButton}
+          colorButton={this.props.colorButtonLeft}
+          className='px-5'
+          outlineButton={this.props.outlineButtonLeft}
+          onClickButton={this.props.onClickButton}
+        />
+  
+        <ActionButton
+          titleButton='Batal'
+          colorButton={this.props.colorButtonRight}
+          className='px-5'
+          outlineButton={this.props.outlineButtonRight}
+          onClickButton={this.onToggleModal}
+        />
+      </ModalFooter>
+    )
+  }
 }
 
-const ActionFormBody = (props) => {
+const ActionFormGroup = (props) => {
   return (
     <FormGroup>
       <Label for={props.label}>{props.nameLabel}</Label>
       <CustomInput {...props} />
     </FormGroup>
-  )
-}
-
-const ActionModalFooter = (props) => {
-  return (
-    <ModalFooter>
-      <ActionButton
-        titleButton='Simpan'
-        colorButton='info'
-        className='px-5'
-        onClickButton={() => {
-          props.onHandlePost()
-          props.onToggleModal()
-        }}
-      />
-
-      <ActionButton
-        titleButton='Batal'
-        colorButton='secondary'
-        className='px-5'
-        outlineButton
-        onClickButton={props.onToggleModal}
-      />
-    </ModalFooter>
   )
 }
 
@@ -171,37 +177,13 @@ CustomInput.propTypes = {
   onChangeInput: PropTypes.func
 }
 
-ActionModalNavbar.propTypes = {
-  titleHeader: PropTypes.string,
-  postDataSantri: PropTypes.object,
-  isModalVisible: PropTypes.bool,
-  onToggleModal: PropTypes.func,
-  onHandleInput: PropTypes.func,
-  onHandlePost: PropTypes.func
-}
-
-ActionModalHeader.propTypes = {
-  titleHeader: PropTypes.string,
-  onToggleModal: PropTypes.func
-}
-
-ActionModalBody.propTypes = {
-  postDataSantri: PropTypes.object,
-  onHandleInput: PropTypes.func
-}
-
-ActionFormBody.propTypes = {
+ActionFormGroup.propTypes = {
   label: PropTypes.string,
   nameLabel: PropTypes.string
-}
-
-ActionModalFooter.propTypes = {
-  onToggleModal: PropTypes.func,
-  onHandlePost: PropTypes.func
 }
 
 ActionSearch.propTypes = {
   onSearchSantri: PropTypes.func
 }
 
-export { ActionButton, ActionModalNavbar, ActionSearch }
+export { ActionButton, ActionModal, ActionSearch }
